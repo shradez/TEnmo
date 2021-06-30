@@ -9,6 +9,7 @@ import com.techelevator.view.ConsoleService;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.List;
 
 public class App {
@@ -95,10 +96,31 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void sendBucks(){
-		String token = currentUser.getToken();
+		User userFrom = currentUser.getUser();
+		User userTo = null;
+    	String token = currentUser.getToken();
 		User[] users = userService.getAll(token);
-		System.out.println(users);
-		
+		System.out.println("-------------------------");
+		System.out.println("Users");
+		System.out.println("ID         Name");
+		System.out.println("-------------------------");
+		for (User user : users) {
+			System.out.println(user.getId().toString() + "   |   " + user.getUsername().toString());
+		}
+		System.out.println("--------");
+		Integer choice = console.getUserInputInteger("Enter ID of user you are sending to (0 to cancel):");
+		if (choice == 0) {
+			System.exit(0);
+		} else {
+			for (User user : users) {
+				if (choice.equals(user.getId())) {
+					userTo = user; // Make if statement here to catch if user is trying to send to themself.
+					System.out.println("You chose user: " + userTo.getUsername().toString());
+					break;
+				}
+			}
+		}
+		// Prompt for amount, then save that to a variable
 	}
 
 	private void requestBucks() {
