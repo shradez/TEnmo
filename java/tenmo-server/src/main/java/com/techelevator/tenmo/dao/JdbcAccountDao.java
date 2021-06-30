@@ -9,47 +9,52 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.security.auth.login.AccountNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class JdbcAccountDao implements AccountDao {
+
     private JdbcTemplate jdbcTemplate;
 
-    @Override
-    public List<Account> findAll() {
-        return null;
+    public JdbcAccountDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
-    public Long findAccountIDByUserId(Long userID) {
-        String sql = "SELECT account_id FROM accounts WHERE user_id = ?;";
-        Long acctId = jdbcTemplate.queryForObject(sql, Long.class, userID);
+    public Account findAccountByUserId(int userID) {
+        String sql = "SELECT account_id, user_id, balance FROM accounts WHERE user_id = ?;";
+        Account a = null;
         try {
-            return acctId;
-        } catch (NullPointerException ex) {
-            System.err.println("Account ID can't be found" + ex.getMessage());
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userID);
+            if (results.next()) {
+                a = mapRowToAccount(results);
+            }
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
         }
-        return null;
+        return a;
     }
 
     @Override
-    public BigDecimal findBalanceByAccountID(Long accountId) {
-        String sql = "SELECT balance FROM accounts WHERE account_id = ?;";
-        BigDecimal balance = jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId);
+    public BigDecimal findBalanceByAccountID(int userId) {
+        String sql = "SELECT balance FROM accounts JOIN users ON users.user_id = accounts.user_id WHERE accounts.user_id = ?;";
+        BigDecimal balance = null;
         try {
-            return balance;
-        } catch (NullPointerException ex) {
-            System.err.println("Balance can't be found" + ex.getMessage());
+            balance = jdbcTemplate.queryForObject(sql, BigDecimal.class, userId);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
         }
-        return null;
+        return balance;
     }
 
-/*    @Override
-    public Long findAccountIDByUserId(Long userID) {
-        return null;
+    private Account mapRowToAccount(SqlRowSet rowSet) {
+        Account account = new Account();
+        account.setAccountId(rowSet.getLong("account_id"));
+        account.setUserId(rowSet.getLong("user_id"));
+        account.setBalance(rowSet.getBigDecimal("balance"));
+        return account;
     }
- */
-
 }
