@@ -40,8 +40,8 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public BigDecimal findBalanceByAccountID(int userId) {
-        String sql = "SELECT balance FROM accounts JOIN users ON users.user_id = accounts.user_id WHERE accounts.user_id = ?;";
-        BigDecimal balance = null;
+        String sql = "SELECT SUM(balance) FROM accounts JOIN users ON users.user_id = accounts.user_id WHERE accounts.user_id = ?;";
+        BigDecimal balance = BigDecimal.ZERO;
         try {
             balance = jdbcTemplate.queryForObject(sql, BigDecimal.class, userId);
         } catch (Exception ex) {

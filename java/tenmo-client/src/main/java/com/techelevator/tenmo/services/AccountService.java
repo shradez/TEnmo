@@ -12,6 +12,7 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 
 
 public class AccountService {
@@ -23,20 +24,20 @@ public class AccountService {
         BASE_URL = url;
     }
 
-    public Account[] getAll() throws AccountServiceException {
+    public Account[] getAll(String token) throws AccountServiceException {
         Account[] accounts = null;
         try {
-            accounts = restTemplate.exchange(BASE_URL + "accounts", HttpMethod.GET, makeAuthEntity(), Account[].class).getBody();
+            accounts = restTemplate.exchange(BASE_URL + "accounts", HttpMethod.GET, makeAuthEntity(token), Account[].class).getBody();
         } catch (RestClientResponseException ex) {
             throw new AccountServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
         }
         return accounts;
     }
 
-    public Account getAccount(int userId) {
+    public Account getAccount(int userId, String token) {
         Account a = null;
         try {
-           a = restTemplate.exchange(BASE_URL + "accounts/" + userId, HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
+           a = restTemplate.exchange(BASE_URL + "accounts/" + userId, HttpMethod.GET, makeAuthEntity(token), Account.class).getBody();
        } catch (RestClientResponseException ex) {
             System.err.println(ex.getRawStatusCode() + " : " + ex.getStatusText());
         } catch (ResourceAccessException | NullPointerException ex) {
@@ -46,9 +47,9 @@ public class AccountService {
     }
 
 
-    private HttpEntity makeAuthEntity() {
+    private HttpEntity makeAuthEntity(String token) {
         HttpHeaders headers = new HttpHeaders();
-        //headers.setBearerAuth(/* Place token here */);
+        headers.setBearerAuth(token);
         HttpEntity entity = new HttpEntity<>(headers);
         return entity;
     }

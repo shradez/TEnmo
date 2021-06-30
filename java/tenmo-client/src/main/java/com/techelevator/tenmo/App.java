@@ -9,6 +9,7 @@ import com.techelevator.tenmo.services.AuthenticationServiceException;
 import com.techelevator.view.ConsoleService;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 public class App {
 
@@ -74,12 +75,11 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	}
 
 	private void viewCurrentBalance() {
-		Account a = accountService.getAccount(currentUser.getUser().getId()) ;
+		String token = currentUser.getToken();
+    	Account a = accountService.getAccount(currentUser.getUser().getId(), token);
 		BigDecimal balance = a.getBalance();
-		System.out.println("Your current balance is: ");
-		System.out.printf("%.2f",balance);
+		System.out.format("Your current balance is: " + NumberFormat.getCurrencyInstance().format(balance) + "\n");
 
-		
 	}
 
 	private void viewTransferHistory() {
