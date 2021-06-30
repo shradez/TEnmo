@@ -2,14 +2,14 @@ package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.services.AccountService;
-import com.techelevator.tenmo.services.AuthenticationService;
-import com.techelevator.tenmo.services.AuthenticationServiceException;
+import com.techelevator.tenmo.services.*;
 import com.techelevator.view.ConsoleService;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.List;
 
 public class App {
 
@@ -31,16 +31,18 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private ConsoleService console;
     private AuthenticationService authenticationService;
     private AccountService accountService;
+    private UserService userService;
 
     public static void main(String[] args) {
-    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), new AccountService(API_BASE_URL));
+    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), new AccountService(API_BASE_URL), new UserService(API_BASE_URL));
     	app.run();
     }
 
-    public App(ConsoleService console, AuthenticationService authenticationService, AccountService accountService) {
+    public App(ConsoleService console, AuthenticationService authenticationService, AccountService accountService, UserService userService) {
 		this.console = console;
 		this.authenticationService = authenticationService;
 		this.accountService = accountService;
+		this.userService = userService;
 	}
 
 	public void run() {
@@ -92,8 +94,10 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		
 	}
 
-	private void sendBucks() {
-		// TODO Auto-generated method stub
+	private void sendBucks(){
+		String token = currentUser.getToken();
+		User[] users = userService.getAll(token);
+		System.out.println(users);
 		
 	}
 

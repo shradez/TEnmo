@@ -90,8 +90,8 @@ public class User {
       return "User{" +
               "id=" + id +
               ", username='" + username + '\'' +
-              ", activated=" + activated +
-              ", authorities=" + authorities +
+            //  ", activated=" + activated +
+             // ", authorities=" + authorities +
               '}';
    }
 }
