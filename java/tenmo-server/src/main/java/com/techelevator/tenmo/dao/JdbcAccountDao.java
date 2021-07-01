@@ -41,9 +41,21 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public boolean updateBalance(int userID, BigDecimal amountToAdd) {
         int rows = 0;
-        String sql = "UPDATE accounts SET balance = balance + ? WHERE user_id = ?;";
+        String sql = "UPDATE accounts SET balance = balance + ? WHERE user_id = ?";
         try {
-            rows = jdbcTemplate.update(sql, userID, amountToAdd);
+            rows = jdbcTemplate.update(sql, amountToAdd, userID);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
+        return rows == 1;
+    }
+
+    @Override
+    public boolean updateBalanceByAccountId(int acctID, BigDecimal amountToAdd) {
+        int rows = 0;
+        String sql = "UPDATE accounts SET balance = balance + ? WHERE account_id = ?";
+        try {
+            rows = jdbcTemplate.update(sql, amountToAdd, acctID);
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
         }
