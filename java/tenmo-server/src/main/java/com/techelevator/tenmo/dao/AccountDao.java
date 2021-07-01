@@ -11,6 +11,7 @@ public interface AccountDao {
 
     BigDecimal findBalanceByAccountID(int userId);
     Account findAccountByUserId (int userID);
+    boolean updateBalance(int userID, BigDecimal amountToAdd);
 
 
 

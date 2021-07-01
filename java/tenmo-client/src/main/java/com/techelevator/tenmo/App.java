@@ -108,19 +108,26 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 			System.out.println(user.getId().toString() + "   |   " + user.getUsername().toString());
 		}
 		System.out.println("--------");
-		Integer choice = console.getUserInputInteger("Enter ID of user you are sending to (0 to cancel):");
+		Integer choice = console.getUserInputInteger("Enter ID of user you are sending to (0 to cancel)");
 		if (choice == 0) {
-			System.exit(0);
+			System.out.println("\nTransfer cancelled.");
+			// User gets sent back to main menu
 		} else {
 			for (User user : users) {
 				if (choice.equals(user.getId())) {
-					userTo = user; // Make if statement here to catch if user is trying to send to themself.
-					System.out.println("You chose user: " + userTo.getUsername().toString());
-					break;
+					if (choice.equals(currentUser.getUser().getId())) {
+						System.out.print("\nSorry, please choose a user ID other than yours. ");
+					}
+					userTo = user; // If statement here to catch if user is trying to send to themself.
+					System.out.println("\nYou chose user: " + userTo.getUsername().toString());
+					// User gets sent back to main menu
 				}
 			}
 		}
 		// Prompt for amount, then save that to a variable
+		String amountToTransfer = console.getUserInput("Enter amount: ");
+		BigDecimal amountToTransferBD = new BigDecimal(amountToTransfer);
+		System.out.println(NumberFormat.getCurrencyInstance().format(amountToTransferBD));
 	}
 
 	private void requestBucks() {

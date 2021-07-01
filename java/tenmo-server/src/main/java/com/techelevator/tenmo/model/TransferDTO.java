@@ -5,33 +5,53 @@ import java.math.BigDecimal;
 
 public class TransferDTO {
     @NotEmpty
-    private BigDecimal transferAmount;
+    private int typeId;
     @NotEmpty
-    private int userIdFrom;
+    private int statusId;
     @NotEmpty
-    private int userIdTo;
+    private BigDecimal amount;
+    @NotEmpty
+    private int accountIdFrom;
+    @NotEmpty
+    private int accountIdTo;
 
-    public BigDecimal getTransferAmount() {
-        return transferAmount;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setTransferAmount(BigDecimal transferAmount) {
-        this.transferAmount = transferAmount;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
-    public int getUserIdFrom() {
-        return userIdFrom;
+    public int getAccountIdFrom() {
+        return accountIdFrom;
     }
 
-    public void setUserIdFrom(int userIdFrom) {
-        this.userIdFrom = userIdFrom;
+    public void setAccountIdFrom(int accountIdFrom) {
+        this.accountIdFrom = accountIdFrom;
     }
 
-    public int getUserIdTo() {
-        return userIdTo;
+    public int getAccountIdTo() {
+        return accountIdTo;
     }
 
-    public void setUserIdTo(int userIdTo) {
-        this.userIdTo = userIdTo;
+    public void setAccountIdTo(int accountIdTo) {
+        this.accountIdTo = accountIdTo;
+    }
+
+    public int getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
+    }
+
+    public int getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(int transferStatusId) {
+        this.statusId = transferStatusId;
     }
 }

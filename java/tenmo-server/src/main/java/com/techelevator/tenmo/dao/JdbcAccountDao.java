@@ -39,6 +39,18 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
+    public boolean updateBalance(int userID, BigDecimal amountToAdd) {
+        int rows = 0;
+        String sql = "UPDATE accounts SET balance = balance + ? WHERE user_id = ?;";
+        try {
+            rows = jdbcTemplate.update(sql, userID, amountToAdd);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
+        return rows == 1;
+    }
+
+    @Override
     public BigDecimal findBalanceByAccountID(int userId) {
         String sql = "SELECT SUM(balance) FROM accounts JOIN users ON users.user_id = accounts.user_id WHERE accounts.user_id = ?;";
         BigDecimal balance = BigDecimal.ZERO;

@@ -40,4 +40,8 @@ public class AccountController {
         userId = userDao.findIdByUsername(name);
         return accountDao.findAccountByUserId(userId);
     }
+
+    // Do they want us to be able to update balance as part of transfers from the API?
+    //@RequestMapping(path = "/balance/update", method = RequestMethod.PUT)
+    //public Account updateBalance(@RequestParam )
 }
