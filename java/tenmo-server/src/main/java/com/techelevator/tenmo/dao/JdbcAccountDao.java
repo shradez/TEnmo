@@ -1,18 +1,11 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.User;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class JdbcAccountDao implements AccountDao {
@@ -76,7 +69,7 @@ public class JdbcAccountDao implements AccountDao {
 
     private Account mapRowToAccount(SqlRowSet rowSet) {
         Account account = new Account();
-        account.setAccountId(rowSet.getLong("account_id"));
+        account.setAccountId(rowSet.getInt("account_id"));
         account.setUserId(rowSet.getLong("user_id"));
         account.setBalance(rowSet.getBigDecimal("balance"));
         return account;

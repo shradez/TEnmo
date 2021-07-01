@@ -1,29 +1,27 @@
 package com.techelevator.tenmo.model;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 public class Account {
 
-    private Long accountId;
+    private int accountId;
     private Long userId;
     private BigDecimal balance;
 
-    public Account() { }
+    public Account() {
+    }
 
-    public Account(Long accountId, Long userId, BigDecimal balance) {
+    public Account(Integer accountId, Long userId, BigDecimal balance) {
         this.accountId = accountId;
         this.userId = userId;
         this.balance = balance;
     }
 
-    public Long getAccountId() {
+    public int getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Long accountId) {
+    public void setAccountId(int accountId) {
         this.accountId = accountId;
     }
 

@@ -34,13 +34,13 @@ public class TransferController {
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void create(@RequestBody TransferDTO transfer, Principal principal) {
+    public void create(@RequestBody TransferDTO transfer, Principal principal) throws Exception {
         String nameFrom = principal.getName();
         int userIdFrom = userDao.findIdByUsername(nameFrom);
         BigDecimal amountSubtractedFromPrincipalUser = transfer.getAmount();
         Account accountOfUserFrom = accountDao.findAccountByUserId(userIdFrom);
 //TODO thorw exception if the if statement is false
-        if (!(amountSubtractedFromPrincipalUser.compareTo(accountOfUserFrom.getBalance()) > 0)) { //ensure there is enough money in account
+        if (!(amountSubtractedFromPrincipalUser.compareTo(accountOfUserFrom.getBalance()) > 0) && (transfer.getAmount().compareTo(BigDecimal.ZERO) > 0)) {
             transfers.add(transfer);
             transferDao.create(transfer);
             transfer.setStatusId(2); // This sets to approved
@@ -51,9 +51,18 @@ public class TransferController {
             int acctIdTo = transfer.getAccountIdTo();
             BigDecimal amountAddedToChosenUser = transfer.getAmount();
             accountDao.updateBalanceByAccountId(acctIdTo, amountAddedToChosenUser);
+        } else { //ensure there is enough money in account and that amount is more than zero / not negative with thrown exception
+            throw new Exception("Sorry, you need to enter an amount greater than zero and ensure you have enough funds in your account.");
         }
 
     }
 
-
+    @RequestMapping(path = "/getforuser", method = RequestMethod.GET)
+    public List<TransferDTO> getTransfersByUserId(Principal principal) {
+        String name = principal.getName();
+        int userId = userDao.findIdByUsername(name);
+        Account account = accountDao.findAccountByUserId(userId);
+        int acctId = account.getAccountId();
+        return transferDao.getTransfersByAccountId(acctId);
+    }
 }

@@ -24,12 +24,13 @@ public class UserController {
     private UserDao userDao;
     private AccountDao accountDao;
 
-    public UserController(UserDao userDao, AccountDao accountDao){
+    public UserController(UserDao userDao, AccountDao accountDao) {
         this.userDao = userDao;
         this.accountDao = accountDao;
     }
-   @RequestMapping(path = "", method = RequestMethod.GET)
-   public List<User> getAll() {
+
+    @RequestMapping(path = "", method = RequestMethod.GET)
+    public List<User> getAll() {
         return userDao.findAll();
     }
 

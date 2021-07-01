@@ -22,7 +22,7 @@ public class AccountController {
     private AccountDao accountDao;
     private UserDao userDao;
 
-    public AccountController(AccountDao accountDao, UserDao userDao){
+    public AccountController(AccountDao accountDao, UserDao userDao) {
         this.userDao = userDao;
         this.accountDao = accountDao;
     }
