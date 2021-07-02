@@ -1,9 +1,6 @@
 package com.techelevator.tenmo;
 
-import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.AuthenticatedUser;
-import com.techelevator.tenmo.model.User;
-import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.model.*;
 import com.techelevator.tenmo.services.*;
 import com.techelevator.view.ConsoleService;
 
@@ -88,119 +85,132 @@ public class App {
     }
 
     private void viewTransferHistory() {
-        // TODO Auto-generated method stub
-
-    }
-
-    private void viewPendingRequests() {
-        // TODO Auto-generated method stub
-
-    }
-
-    private void sendBucks() {
-        User userFrom = currentUser.getUser();
-        User userTo = null;
-        BigDecimal amountToTransferBD = null;
         String token = currentUser.getToken();
-        User[] users = userService.getAll(token);
-        System.out.println("-------------------------");
-        System.out.println("Users");
-        System.out.println("ID         Name");
-        System.out.println("-------------------------");
-        for (User user : users) {
-            System.out.println(user.getId().toString() + "   |   " + user.getUsername().toString());
+        Transfer[] transfers = transferService.getUserTransferHistory(token);
+        System.out.println("---------------------------------");
+        System.out.println("Transfers");
+        System.out.println("ID         From/To         Amount");
+        System.out.println("---------------------------------");
+        for (Transfer transfer : transfers) {
+//System.out.format(Arrays.toString(transferService.getUserTransferHistory(token))) + ;
+            if (transfer.getAccountIdFrom() != accountService.getAccountIdByUserId(currentUser.getUser().getId(), token)) {
+                System.out.println(transfer.getTransferId().toString() + "       |       " + transfer.getAccountIdFrom());
+            } else {
+                System.out.println(transfer.getTransferId().toString() + "       |       " + transfer.getAccountIdTo());
+            }
+
         }
         System.out.println("--------");
-        Integer choice = console.getUserInputInteger("Enter ID of user you are sending to (0 to cancel)");
-        if (choice == 0) {
-            System.out.println("\nTransfer cancelled.");
-            // User gets sent back to main menu
-        } else {
-            for (User user : users) {
-                if (choice.equals(user.getId())) {
-                    if (choice.equals(currentUser.getUser().getId())) {
-                        System.out.print("\nSorry, please choose a user ID other than yours. \n");
-                    } else {
-                        userTo = user; // If statement here to catch if user is trying to send to themself.
-                        System.out.println("\nYou chose user: " + userTo.getUsername().toString());
-                        // User gets sent back to main menu
 
-                        // Prompt for amount, then save that to a variable
-                        String amountToTransfer = console.getUserInput("Enter amount: ");
-                        amountToTransferBD = new BigDecimal(amountToTransfer);
-                        System.out.println(NumberFormat.getCurrencyInstance().format(amountToTransferBD));
+        private void viewPendingRequests () {
+            // TODO Auto-generated method stub
+
+        }
+
+        private void sendBucks () {
+            User userFrom = currentUser.getUser();
+            User userTo = null;
+            BigDecimal amountToTransferBD = null;
+            String token = currentUser.getToken();
+            User[] users = userService.getAll(token);
+            System.out.println("-------------------------");
+            System.out.println("Users");
+            System.out.println("ID         Name");
+            System.out.println("-------------------------");
+            for (User user : users) {
+                System.out.println(user.getId().toString() + "   |   " + user.getUsername().toString());
+            }
+            System.out.println("--------");
+            Integer choice = console.getUserInputInteger("Enter ID of user you are sending to (0 to cancel)");
+            if (choice == 0) {
+                System.out.println("\nTransfer cancelled.");
+                // User gets sent back to main menu
+            } else {
+                for (User user : users) {
+                    if (choice.equals(user.getId())) {
+                        if (choice.equals(currentUser.getUser().getId())) {
+                            System.out.print("\nSorry, please choose a user ID other than yours. \n");
+                        } else {
+                            userTo = user; // If statement here to catch if user is trying to send to themself.
+                            System.out.println("\nYou chose user: " + userTo.getUsername().toString());
+                            // User gets sent back to main menu
+
+                            // Prompt for amount, then save that to a variable
+                            String amountToTransfer = console.getUserInput("Enter amount: ");
+                            amountToTransferBD = new BigDecimal(amountToTransfer);
+                            System.out.println(NumberFormat.getCurrencyInstance().format(amountToTransferBD));
+                        }
                     }
                 }
             }
+            int userFromAcctId = accountService.getAccountIdByUserId(userFrom.getId(), token);
+            int userToAcctId = accountService.getAccountIdByUserId(userTo.getId(), token);
+            transferService.createSend(token, userFromAcctId, userToAcctId, amountToTransferBD);
+            System.out.println("Transfer created!");
         }
-        int userFromAcctId = accountService.getAccountIdByUserId(userFrom.getId(), token);
-        int userToAcctId = accountService.getAccountIdByUserId(userTo.getId(), token);
-        transferService.createSend(token, userFromAcctId, userToAcctId, amountToTransferBD);
-        System.out.println("Transfer created!");
-    }
 
-    private void requestBucks() {
-        // TODO Auto-generated method stub
+        private void requestBucks () {
+            // TODO Auto-generated method stub
 
-    }
+        }
 
-    private void exitProgram() {
-        System.exit(0);
-    }
+        private void exitProgram () {
+            System.exit(0);
+        }
 
-    private void registerAndLogin() {
-        while (!isAuthenticated()) {
-            String choice = (String) console.getChoiceFromOptions(LOGIN_MENU_OPTIONS);
-            if (LOGIN_MENU_OPTION_LOGIN.equals(choice)) {
-                login();
-            } else if (LOGIN_MENU_OPTION_REGISTER.equals(choice)) {
-                register();
-            } else {
-                // the only other option on the login menu is to exit
-                exitProgram();
+        private void registerAndLogin () {
+            while (!isAuthenticated()) {
+                String choice = (String) console.getChoiceFromOptions(LOGIN_MENU_OPTIONS);
+                if (LOGIN_MENU_OPTION_LOGIN.equals(choice)) {
+                    login();
+                } else if (LOGIN_MENU_OPTION_REGISTER.equals(choice)) {
+                    register();
+                } else {
+                    // the only other option on the login menu is to exit
+                    exitProgram();
+                }
             }
         }
-    }
 
-    private boolean isAuthenticated() {
-        return currentUser != null;
-    }
+        private boolean isAuthenticated () {
+            return currentUser != null;
+        }
 
-    private void register() {
-        System.out.println("Please register a new user account");
-        boolean isRegistered = false;
-        while (!isRegistered) //will keep looping until user is registered
-        {
-            UserCredentials credentials = collectUserCredentials();
-            try {
-                authenticationService.register(credentials);
-                isRegistered = true;
-                System.out.println("Registration successful. You can now login.");
-            } catch (AuthenticationServiceException e) {
-                System.out.println("REGISTRATION ERROR: " + e.getMessage());
-                System.out.println("Please attempt to register again.");
+        private void register () {
+            System.out.println("Please register a new user account");
+            boolean isRegistered = false;
+            while (!isRegistered) //will keep looping until user is registered
+            {
+                UserCredentials credentials = collectUserCredentials();
+                try {
+                    authenticationService.register(credentials);
+                    isRegistered = true;
+                    System.out.println("Registration successful. You can now login.");
+                } catch (AuthenticationServiceException e) {
+                    System.out.println("REGISTRATION ERROR: " + e.getMessage());
+                    System.out.println("Please attempt to register again.");
+                }
             }
         }
-    }
 
-    private void login() {
-        System.out.println("Please log in");
-        currentUser = null;
-        while (currentUser == null) //will keep looping until user is logged in
-        {
-            UserCredentials credentials = collectUserCredentials();
-            try {
-                currentUser = authenticationService.login(credentials);
-            } catch (AuthenticationServiceException e) {
-                System.out.println("LOGIN ERROR: " + e.getMessage());
-                System.out.println("Please attempt to login again.");
+        private void login () {
+            System.out.println("Please log in");
+            currentUser = null;
+            while (currentUser == null) //will keep looping until user is logged in
+            {
+                UserCredentials credentials = collectUserCredentials();
+                try {
+                    currentUser = authenticationService.login(credentials);
+                } catch (AuthenticationServiceException e) {
+                    System.out.println("LOGIN ERROR: " + e.getMessage());
+                    System.out.println("Please attempt to login again.");
+                }
             }
         }
-    }
 
-    private UserCredentials collectUserCredentials() {
-        String username = console.getUserInput("Username");
-        String password = console.getUserInput("Password");
-        return new UserCredentials(username, password);
+        private UserCredentials collectUserCredentials () {
+            String username = console.getUserInput("Username");
+            String password = console.getUserInput("Password");
+            return new UserCredentials(username, password);
+        }
     }
-}

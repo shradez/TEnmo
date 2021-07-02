@@ -11,6 +11,8 @@ public class Transfer {
     private int accountIdFrom;
     private int accountIdTo;
 
+    public Transfer(){}
+
     public Transfer(int accountIdFrom, int accountIdTo, BigDecimal amount) {
         this.accountIdFrom = accountIdFrom;
         this.accountIdTo = accountIdTo;
@@ -63,5 +65,10 @@ public class Transfer {
 
     public void setTransferId(int transferId) {
         this.transferId = transferId;
+    }
+
+    public String toString() {
+        return "Transfer id = " + transferId + " | accountIdFrom = "+ accountIdFrom +
+                " | accountIdTo = " + accountIdTo + " | Amount = " + amount + "\n";
     }
 }

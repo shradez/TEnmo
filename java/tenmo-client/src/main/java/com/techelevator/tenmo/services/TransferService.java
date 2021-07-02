@@ -9,6 +9,8 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TransferService {
 
@@ -17,6 +19,18 @@ public class TransferService {
 
     public TransferService(String url) {
         BASE_URL = url;
+    }
+
+    public Transfer[] getUserTransferHistory(String token) {
+        Transfer[] transferHistory = null;
+        try {
+            transferHistory = restTemplate.exchange(BASE_URL + "transfers/getforuser", HttpMethod.GET, makeSimpleAuthEntity(token), Transfer[].class).getBody();
+        } catch (RestClientResponseException ex) {
+            System.err.println(ex.getRawStatusCode() + " : " + ex.getStatusText());
+        } catch (ResourceAccessException | NullPointerException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return transferHistory;
     }
 
     public Transfer createSend(String token, int acctIdFrom, int acctIdTo, BigDecimal amount) {
@@ -37,4 +51,12 @@ public class TransferService {
         HttpEntity entity = new HttpEntity<>(t, headers);
         return entity;
     }
+
+    private HttpEntity makeSimpleAuthEntity(String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        HttpEntity entity = new HttpEntity<>(headers);
+        return entity;
+    }
+
 }
