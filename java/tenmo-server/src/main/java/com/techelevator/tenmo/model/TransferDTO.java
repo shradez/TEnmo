@@ -4,6 +4,7 @@ import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 
 public class TransferDTO {
+    private int transferId;
     @NotEmpty
     private int typeId;
     @NotEmpty
@@ -53,5 +54,13 @@ public class TransferDTO {
 
     public void setStatusId(int transferStatusId) {
         this.statusId = transferStatusId;
+    }
+
+    public int getTransferId() {
+        return transferId;
+    }
+
+    public void setTransferId(int transferId) {
+        this.transferId = transferId;
     }
 }

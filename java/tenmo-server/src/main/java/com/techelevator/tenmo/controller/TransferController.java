@@ -24,28 +24,24 @@ public class TransferController {
     private UserDao userDao;
     private TransferDao transferDao;
 
-    private List<TransferDTO> transfers = new ArrayList<>();
-
     public TransferController(AccountDao accountDao, UserDao userDao, TransferDao transferDao) {
         this.accountDao = accountDao;
         this.userDao = userDao;
         this.transferDao = transferDao;
     }
 
-    @RequestMapping(path = "/create", method = RequestMethod.POST)
+    @RequestMapping(path = "/send", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void create(@RequestBody TransferDTO transfer, Principal principal) throws Exception {
+    public void send(@RequestBody TransferDTO transfer, Principal principal) throws Exception {
         String nameFrom = principal.getName();
         int userIdFrom = userDao.findIdByUsername(nameFrom);
         BigDecimal amountSubtractedFromPrincipalUser = transfer.getAmount();
         Account accountOfUserFrom = accountDao.findAccountByUserId(userIdFrom);
-//TODO thorw exception if the if statement is false
         if (!(amountSubtractedFromPrincipalUser.compareTo(accountOfUserFrom.getBalance()) > 0) && (transfer.getAmount().compareTo(BigDecimal.ZERO) > 0)) {
-            transfers.add(transfer);
-            transferDao.create(transfer);
             transfer.setStatusId(2); // This sets to approved
+            transfer.setTypeId(2); // This sets to send
+            transferDao.create(transfer);
             //subtract from Principal User balance
-            //TODO put in a negative number updates balance and does not create a transfer.
             accountDao.updateBalance(userIdFrom, BigDecimal.valueOf(-1).multiply(amountSubtractedFromPrincipalUser));
             // add to balance principal is sending to
             int acctIdTo = transfer.getAccountIdTo();
@@ -57,6 +53,16 @@ public class TransferController {
 
     }
 
+   @RequestMapping(path = "/request", method = RequestMethod.POST)
+   @ResponseStatus(value = HttpStatus.CREATED)
+   public void request(@RequestBody TransferDTO transfer, Principal principal) {
+        String nameRequester = principal.getName();
+        int userIdRequester = userDao.findIdByUsername(nameRequester);
+        transfer.setStatusId(1);
+        transfer.setTypeId(1);
+        transferDao.create(transfer);
+   }
+
     @RequestMapping(path = "/getforuser", method = RequestMethod.GET)
     public List<TransferDTO> getTransfersByUserId(Principal principal) {
         String name = principal.getName();
@@ -64,5 +70,19 @@ public class TransferController {
         Account account = accountDao.findAccountByUserId(userId);
         int acctId = account.getAccountId();
         return transferDao.getTransfersByAccountId(acctId);
+    }
+
+    @RequestMapping(path = "/getpending", method = RequestMethod.GET)
+    public List<TransferDTO> getPendingTransfers(Principal principal) {
+        String name = principal.getName();
+        int userId = userDao.findIdByUsername(name);
+        Account account = accountDao.findAccountByUserId(userId);
+        int acctId = account.getAccountId();
+        return transferDao.getPendingTransfersByAccountId(acctId);
+    }
+
+    @RequestMapping(path = "/{transferId}", method = RequestMethod.GET)
+    public TransferDTO getTransferByTransferId(@PathVariable int transferId) {
+        return transferDao.getTransferByTransferId(transferId);
     }
 }

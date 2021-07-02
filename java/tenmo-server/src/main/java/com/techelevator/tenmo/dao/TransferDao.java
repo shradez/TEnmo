@@ -12,5 +12,9 @@ public interface TransferDao {
 
     public boolean create(TransferDTO transfer);
 
-    public List<TransferDTO> getTransfersByAccountId(int acctID);
+    public List<TransferDTO> getTransfersByAccountId(int acctId);
+
+    public TransferDTO getTransferByTransferId(int transferId);
+
+    public List<TransferDTO> getPendingTransfersByAccountId(int acctId);
 }
