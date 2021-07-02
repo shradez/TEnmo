@@ -85,4 +85,24 @@ public class TransferController {
     public TransferDTO getTransferByTransferId(@PathVariable int transferId) {
         return transferDao.getTransferByTransferId(transferId);
     }
+
+    @RequestMapping(path = "/approve", method = RequestMethod.PUT)
+    public TransferDTO approve(@RequestBody TransferDTO transfer) throws Exception {
+        if (transfer.getStatusId() == 1) {
+            accountDao.updateBalanceByAccountId(transfer.getAccountIdFrom(), transfer.getAmount().multiply(BigDecimal.valueOf(-1)));
+            accountDao.updateBalanceByAccountId(transfer.getAccountIdTo(), transfer.getAmount());
+            return transferDao.approve(transfer.getTransferId());
+        } else {
+            throw new Exception("Sorry, this request is not pending approval or rejection.");
+        }
+    }
+
+    @RequestMapping(path = "/reject", method = RequestMethod.PUT)
+    public TransferDTO reject(@RequestBody TransferDTO transfer) throws Exception {
+        if (transfer.getStatusId() == 1) {
+            return transferDao.reject(transfer.getTransferId());
+        } else {
+            throw new Exception("Sorry, this request is not pending approval or rejection.");
+        }
+    }
 }

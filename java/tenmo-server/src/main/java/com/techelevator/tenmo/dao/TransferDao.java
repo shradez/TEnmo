@@ -17,4 +17,8 @@ public interface TransferDao {
     public TransferDTO getTransferByTransferId(int transferId);
 
     public List<TransferDTO> getPendingTransfersByAccountId(int acctId);
+
+    public TransferDTO approve(int transferId);
+
+    public TransferDTO reject(int transferId);
 }

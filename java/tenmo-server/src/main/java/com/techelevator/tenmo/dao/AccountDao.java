@@ -13,6 +13,7 @@ public interface AccountDao {
     Account findAccountByUserId (int userID);
     boolean updateBalance(int userID, BigDecimal amountToAdd);
     boolean updateBalanceByAccountId(int acctID, BigDecimal amountToAdd);
+    int findAccountIdByUserId (int acctId);
 
 
 

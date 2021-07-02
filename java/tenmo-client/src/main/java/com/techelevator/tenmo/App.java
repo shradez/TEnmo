@@ -33,17 +33,19 @@ public class App {
     private AuthenticationService authenticationService;
     private AccountService accountService;
     private UserService userService;
+    private TransferService transferService;
 
     public static void main(String[] args) {
-        App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), new AccountService(API_BASE_URL), new UserService(API_BASE_URL));
+        App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), new AccountService(API_BASE_URL), new UserService(API_BASE_URL), new TransferService(API_BASE_URL));
         app.run();
     }
 
-    public App(ConsoleService console, AuthenticationService authenticationService, AccountService accountService, UserService userService) {
+    public App(ConsoleService console, AuthenticationService authenticationService, AccountService accountService, UserService userService, TransferService transferService) {
         this.console = console;
         this.authenticationService = authenticationService;
         this.accountService = accountService;
         this.userService = userService;
+        this.transferService = transferService;
     }
 
     public void run() {
@@ -98,6 +100,7 @@ public class App {
     private void sendBucks() {
         User userFrom = currentUser.getUser();
         User userTo = null;
+        BigDecimal amountToTransferBD = null;
         String token = currentUser.getToken();
         User[] users = userService.getAll(token);
         System.out.println("-------------------------");
@@ -124,13 +127,16 @@ public class App {
 
                         // Prompt for amount, then save that to a variable
                         String amountToTransfer = console.getUserInput("Enter amount: ");
-                        BigDecimal amountToTransferBD = new BigDecimal(amountToTransfer);
+                        amountToTransferBD = new BigDecimal(amountToTransfer);
                         System.out.println(NumberFormat.getCurrencyInstance().format(amountToTransferBD));
                     }
                 }
             }
         }
-
+        int userFromAcctId = accountService.getAccountIdByUserId(userFrom.getId(), token);
+        int userToAcctId = accountService.getAccountIdByUserId(userTo.getId(), token);
+        transferService.createSend(token, userFromAcctId, userToAcctId, amountToTransferBD);
+        System.out.println("Transfer created!");
     }
 
     private void requestBucks() {

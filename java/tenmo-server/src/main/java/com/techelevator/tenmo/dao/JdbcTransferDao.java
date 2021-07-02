@@ -87,6 +87,32 @@ public class JdbcTransferDao implements TransferDao {
         return transfers;
     }
 
+    @Override
+    public TransferDTO approve(int transferId) {
+        String sql = "UPDATE transfers " +
+                "SET transfer_status_id = 2 " +
+                "WHERE transfer_id = ?;";
+        try {
+            jdbcTemplate.update(sql, transferId);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
+        return getTransferByTransferId(transferId);
+    }
+
+    @Override
+    public TransferDTO reject(int transferId) {
+        String sql = "UPDATE transfers " +
+                "SET transfer_status_id = 3 " +
+                "WHERE transfer_id = ?;";
+        try {
+            jdbcTemplate.update(sql, transferId);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
+        return getTransferByTransferId(transferId);
+    }
+
 
     private TransferDTO mapRowToTransfer(SqlRowSet rowSet) {
         TransferDTO transfer = new TransferDTO();

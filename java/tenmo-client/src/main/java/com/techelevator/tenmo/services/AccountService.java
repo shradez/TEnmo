@@ -46,6 +46,17 @@ public class AccountService {
         return a;
     }
 
+    public int getAccountIdByUserId(int userId, String token) {
+        int id = 0;
+        try {
+            id = restTemplate.exchange(BASE_URL + "accounts/id/" + userId, HttpMethod.GET, makeAuthEntity(token), Integer.class).getBody();
+        } catch (RestClientResponseException ex) {
+            System.err.println(ex.getRawStatusCode() + " : " + ex.getStatusText());
+        } catch (ResourceAccessException | NullPointerException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return id;
+    }
 
     private HttpEntity makeAuthEntity(String token) {
         HttpHeaders headers = new HttpHeaders();
