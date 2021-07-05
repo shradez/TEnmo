@@ -89,6 +89,25 @@ public class JdbcUserDao implements UserDao {
         return true;
     }
 
+    @Override
+    public String findUsernameByAcctId(int acctId) throws UsernameNotFoundException {
+        String username = null;
+        String sql = "SELECT username FROM users " +
+                "INNER JOIN accounts ON users.user_id = accounts.user_id " +
+                "WHERE account_id = ?;";
+        try {
+            username = jdbcTemplate.queryForObject(sql, String.class, acctId);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
+        if (username != null) {
+            return username;
+        } else {
+            throw new UsernameNotFoundException("User " + username + " was not found.");
+        }
+
+    }
+
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();
         user.setId(rs.getLong("user_id"));

@@ -36,6 +36,18 @@ public class UserService {
         return users;
     }
 
+    public String getUsernameByAcctId(int acctId, String token) {
+        String username = null;
+        try {
+            username = restTemplate.exchange(BASE_URL + "users/" + acctId, HttpMethod.GET, makeAuthEntity(token), String.class).getBody();
+        } catch (RestClientResponseException ex) {
+            System.err.println(ex.getRawStatusCode() + " : " + ex.getStatusText());
+        } catch (ResourceAccessException | NullPointerException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return username;
+    }
+
     private HttpEntity makeAuthEntity(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
