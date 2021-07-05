@@ -89,8 +89,8 @@ public class TransferController {
     @RequestMapping(path = "/approve", method = RequestMethod.PUT)
     public TransferDTO approve(@RequestBody TransferDTO transfer) throws Exception {
         if (transfer.getStatusId() == 1) {
-            accountDao.updateBalanceByAccountId(transfer.getAccountIdFrom(), transfer.getAmount().multiply(BigDecimal.valueOf(-1)));
-            accountDao.updateBalanceByAccountId(transfer.getAccountIdTo(), transfer.getAmount());
+            accountDao.updateBalanceByAccountId(transfer.getAccountIdTo(), transfer.getAmount().multiply(BigDecimal.valueOf(-1)));
+            accountDao.updateBalanceByAccountId(transfer.getAccountIdFrom(), transfer.getAmount());
             return transferDao.approve(transfer.getTransferId());
         } else {
             throw new Exception("Sorry, this request is not pending approval or rejection.");

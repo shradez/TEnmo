@@ -88,53 +88,119 @@ public class App {
     private void viewTransferHistory() {
         String token = currentUser.getToken();
         Transfer[] transfers = transferService.getUserTransferHistory(token);
-        System.out.println("---------------------------------");
-        System.out.println("Transfers");
-        System.out.println("ID         From/To         Amount");
-        System.out.println("---------------------------------");
+        List<String> pastTransfers = new ArrayList<>();
         for (Transfer transfer : transfers) {
-//System.out.format(Arrays.toString(transferService.getUserTransferHistory(token))) + ;
             if (transfer.getAccountIdFrom() == accountService.getAccountIdByUserId(currentUser.getUser().getId(), token)) {
-                System.out.println(transfer.getTransferId() + "       To: " + userService.getUsernameByAcctId(transfer.getAccountIdTo(), token) + "         " + transfer.getAmount());
+                pastTransfers.add(transfer.getTransferId() + "       To: " + userService.getUsernameByAcctId(transfer.getAccountIdTo(), token) + "         " + transfer.getAmount());
             } else {
-                System.out.println(transfer.getTransferId() + "     From: " + userService.getUsernameByAcctId(transfer.getAccountIdFrom(), token) + "         " + transfer.getAmount());
+                pastTransfers.add(transfer.getTransferId() + "     From: " + userService.getUsernameByAcctId(transfer.getAccountIdFrom(), token) + "         " + transfer.getAmount());
             }
 
         }
-        System.out.println("--------");
-        Integer choice = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel)");
-        if (choice == 0) {
-            System.out.println("\nView details cancelled.");
-            // User gets sent back to main menu
-        } else {
-            int count = 0;
-            for (Transfer transfer : transfers) {
-                String usernameFrom = userService.getUsernameByAcctId(transfer.getAccountIdFrom(), token);
-                String usernameTo = userService.getUsernameByAcctId(transfer.getAccountIdTo(), token);
-                String type = null;
-                String status = null;
-                if (choice == transfer.getTransferId()) {
-                    if (transfer.getTypeId() == 1) type = "Request";
-                    if (transfer.getTypeId() == 2) type = "Send";
-                    if (transfer.getStatusId() == 1) status = "Pending";
-                    if (transfer.getStatusId() == 2) status = "Approved";
-                    if (transfer.getStatusId() == 3) status = "Rejected";
-                    System.out.println("\n-------------------------\nTransfer Details\n-------------------------");
-                    System.out.println("Id: " + transfer.getTransferId() + "\nFrom: " + usernameFrom + "\nTo: " + usernameTo + "\nType: " + type + "\nStatus: " + status + "\nAmount: " + NumberFormat.getCurrencyInstance().format(transfer.getAmount()));
-                } else {
-                    count++;
-                }
-                if (count == transfers.length) {
-                    // If count is same as length of list, we know we got to the end of the last iteration of the for loop without a match, therefore the user did not enter a valid transfer ID.
-                    System.out.println("\nSorry, you did not enter a valid Transfer ID.");
+        //ensure they have a transfer history
+        if (pastTransfers.size() > 0) {
+            System.out.println("---------------------------------");
+            System.out.println("Transfers");
+            System.out.println("ID         From/To         Amount");
+            System.out.println("---------------------------------");
+            for (String string : pastTransfers) {
+                System.out.println(string);
+            }
+            System.out.println("--------");
+
+            Integer choice = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel)");
+            if (choice == 0) {
+                System.out.println("\nView details cancelled.");
+                // User gets sent back to main menu
+            } else {
+                int count = 0;
+                for (Transfer transfer : transfers) {
+                    String usernameFrom = userService.getUsernameByAcctId(transfer.getAccountIdFrom(), token);
+                    String usernameTo = userService.getUsernameByAcctId(transfer.getAccountIdTo(), token);
+                    String type = null;
+                    String status = null;
+                    if (choice == transfer.getTransferId()) {
+                        if (transfer.getTypeId() == 1) type = "Request";
+                        if (transfer.getTypeId() == 2) type = "Send";
+                        if (transfer.getStatusId() == 1) status = "Pending";
+                        if (transfer.getStatusId() == 2) status = "Approved";
+                        if (transfer.getStatusId() == 3) status = "Rejected";
+                        System.out.println("\n-------------------------\nTransfer Details\n-------------------------");
+                        System.out.println("Id: " + transfer.getTransferId() + "\nFrom: " + usernameFrom + "\nTo: " + usernameTo + "\nType: " + type + "\nStatus: " + status + "\nAmount: " + NumberFormat.getCurrencyInstance().format(transfer.getAmount()));
+                    } else {
+                        count++;
+                    }
+                    if (count == transfers.length) {
+                        // If count is same as length of list, we know we got to the end of the last iteration of the for loop without a match, therefore the user did not enter a valid transfer ID.
+                        System.out.println("\nSorry, you did not enter a valid Transfer ID.");
+                    }
                 }
             }
+            //if they do not have a transfer history...
+        } else {
+            System.out.println("You have no past transfers.");
         }
     }
 
     private void viewPendingRequests() {
-        // TODO Auto-generated method stub
+        String token = currentUser.getToken();
+        Transfer[] transfers = transferService.getUserTransferHistory(token);
+        List<String> pendingRequests = new ArrayList<>();
+        List<Transfer> pendingTransfers = new ArrayList<>();
+        int count = 0;
+        for (Transfer transfer : transfers) {
+            if (transfer.getStatusId() == 1 && transfer.getAccountIdFrom() != accountService.getAccountIdByUserId(currentUser.getUser().getId(), token)) {
+                pendingRequests.add(transfer.getTransferId() + "       " + userService.getUsernameByAcctId(transfer.getAccountIdFrom(), token) + "        " + transfer.getAmount());
+                pendingTransfers.add(transfer);
+            }
+        }
+        //ensure they have pending transactions
+        if (pendingRequests.size() > 0) {
+            System.out.println("---------------------------------");
+            System.out.println("Transfers");
+            System.out.println("ID         To         Amount");
+            System.out.println("---------------------------------");
+            for (String string : pendingRequests) {
+                System.out.println(string);
+            }
+            System.out.println("--------");
+            Integer choice = console.getUserInputInteger("Please enter transfer ID to approve/reject (0 to cancel)");
+            if (choice == 0) {
+                System.out.println("\nView details cancelled.");
+                // User gets sent back to main menu
+            } else {
+//this moves on to use case 9
+                for (Transfer transfer : pendingTransfers) {
+                    if (choice == transfer.getTransferId()) {
+                        System.out.println("1: Approve");
+                        System.out.println("2: Reject");
+                        System.out.println("0: Don't approve or reject");
+                        System.out.println("--------");
+                        Integer choice2 = console.getUserInputInteger("Please choose an option");
+                        if (choice2 == 0) {
+                            System.out.println("\n You did not approve or reject the pending transfer.");
+                        } else if (choice2 == 1) {
+                            transferService.approveTransferStatus(token, transfer);
+                            System.out.println("\n Transfer approved.");
+                        } else if (choice2 == 2) {
+                            transferService.rejectTransferStatus(token, transfer);
+                            System.out.println("\n Transfer rejected.");
+                        } else {
+                            System.out.println("\nSorry, you did not select a valid option.");
+                        }
+                    } else {
+                        count++;
+                    }
+                    if (count == pendingTransfers.size()) {
+                        System.out.println("\nSorry, You did not enter a valid transfer ID.");
+                    }
+                }
+            }
 
+//if they don't have pending transactions...
+        } else {
+            System.out.println("You have no pending requests.\n");
+        }
     }
 
     private void sendBucks() {
@@ -156,33 +222,82 @@ public class App {
             System.out.println("\nTransfer cancelled.");
             // User gets sent back to main menu
         } else {
+            int count = 0;
             for (User user : users) {
-                if (choice.equals(user.getId())) {
-                    if (choice.equals(currentUser.getUser().getId())) {
-                        System.out.print("\nSorry, please choose a user ID other than yours. \n");
-                    } else {
-                        userTo = user; // If statement here to catch if user is trying to send to themself.
-                        System.out.println("\nYou chose user: " + userTo.getUsername().toString());
-                        // User gets sent back to main menu
+                if (choice.equals(currentUser.getUser().getId())) {
+                    System.out.print("\nSorry, please choose a user ID other than yours. \n");
+                    break;
+                } else if (choice.equals(user.getId())) {
+                    userTo = user; // If statement here to catch if user is trying to send to themself.
+                    System.out.println("\nYou chose user: " + userTo.getUsername().toString());
+                    // User gets sent back to main menu
 
-                        // Prompt for amount, then save that to a variable
-                        String amountToTransfer = console.getUserInput("Enter amount: ");
-                        amountToTransferBD = new BigDecimal(amountToTransfer);
-                        System.out.println(NumberFormat.getCurrencyInstance().format(amountToTransferBD));
-                    }
+                    // Prompt for amount, then save that to a variable
+                    String amountToTransfer = console.getUserInput("Enter amount: ");
+                    amountToTransferBD = new BigDecimal(amountToTransfer);
+                    System.out.println(NumberFormat.getCurrencyInstance().format(amountToTransferBD));
+                    int userFromAcctId = accountService.getAccountIdByUserId(userFrom.getId(), token);
+                    int userToAcctId = accountService.getAccountIdByUserId(userTo.getId(), token);
+                    transferService.createSend(token, userFromAcctId, userToAcctId, amountToTransferBD);
+                    System.out.println("Transfer created!");
+                } else {
+                    count++;
+                }
+                if (count == users.length) {
+                    System.out.println("\nSorry you did not enter a valid user ID.");
                 }
             }
         }
-        int userFromAcctId = accountService.getAccountIdByUserId(userFrom.getId(), token);
-        int userToAcctId = accountService.getAccountIdByUserId(userTo.getId(), token);
-        transferService.createSend(token, userFromAcctId, userToAcctId, amountToTransferBD);
-        System.out.println("Transfer created!");
     }
+
 
     private void requestBucks() {
-        // TODO Auto-generated method stub
+        User userFrom = currentUser.getUser();
+        User userTo = null;
+        BigDecimal amountToRequestBD = null;
+        String token = currentUser.getToken();
+        User[] users = userService.getAll(token);
+        System.out.println("-------------------------");
+        System.out.println("Users");
+        System.out.println("ID         Name");
+        System.out.println("-------------------------");
+        for (User user : users) {
+            System.out.println(user.getId().toString() + "   |   " + user.getUsername().toString());
+        }
+        System.out.println("--------");
+        Integer choice = console.getUserInputInteger("Enter ID of user you are requesting from (0 to cancel)");
+        if (choice == 0) {
+            System.out.println("\nTransfer cancelled.");
+            // User gets sent back to main menu
+        } else {
+            int count = 0;
+            for (User user : users) {
+                if (choice.equals(currentUser.getUser().getId())) {
+                    System.out.print("\nSorry, please choose a user ID other than yours. \n");
+                    break;
+                } else if (choice.equals(user.getId())) {
+                    userTo = user; // If statement here to catch if user is trying to send to themself.
+                    System.out.println("\nYou chose user: " + userTo.getUsername().toString());
+                    // User gets sent back to main menu
 
+                    // Prompt for amount, then save that to a variable
+                    String amountToTransfer = console.getUserInput("Enter amount: ");
+                    amountToRequestBD = new BigDecimal(amountToTransfer);
+                    System.out.println(NumberFormat.getCurrencyInstance().format(amountToRequestBD));
+                    int userFromAcctId = accountService.getAccountIdByUserId(userFrom.getId(), token);
+                    int userToAcctId = accountService.getAccountIdByUserId(userTo.getId(), token);
+                    transferService.createRequest(token, userFromAcctId, userToAcctId, amountToRequestBD);
+                    System.out.println("Transfer created!");
+                } else {
+                    count++;
+                }
+                if (count == users.length) {
+                    System.out.println("\nSorry you did not enter a valid user ID.");
+                }
+            }
+        }
     }
+
 
     private void exitProgram() {
         System.exit(0);

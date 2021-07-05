@@ -44,6 +44,40 @@ public class TransferService {
         }
         return t;
     }
+    public Transfer createRequest(String token, int acctIdFrom, int acctIdTo, BigDecimal amount) {
+        Transfer t = new Transfer(acctIdFrom, acctIdTo, amount);
+        try {
+            t = restTemplate.postForObject(BASE_URL + "transfers/request", makeAuthEntity(token, t), Transfer.class);
+        } catch (RestClientResponseException ex) {
+            System.err.println(ex.getRawStatusCode() + " : " + ex.getStatusText());
+        } catch (ResourceAccessException | NullPointerException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return t;
+    }
+
+    public Transfer approveTransferStatus(String token, Transfer transfer) {
+       Transfer t = transfer;
+        try {
+            restTemplate.put(BASE_URL + "transfers/approve", makeAuthEntity(token, t));
+        } catch (RestClientResponseException ex) {
+            System.err.println(ex.getRawStatusCode() + " : " + ex.getStatusText());
+        } catch (ResourceAccessException | NullPointerException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return t;
+    }
+    public Transfer rejectTransferStatus(String token, Transfer transfer) {
+        Transfer t = transfer;
+        try {
+            restTemplate.put(BASE_URL + "transfers/reject", makeAuthEntity(token, t));
+        } catch (RestClientResponseException ex) {
+            System.err.println(ex.getRawStatusCode() + " : " + ex.getStatusText());
+        } catch (ResourceAccessException | NullPointerException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return t;
+    }
 
     private HttpEntity makeAuthEntity(String token, Transfer t) {
         HttpHeaders headers = new HttpHeaders();
