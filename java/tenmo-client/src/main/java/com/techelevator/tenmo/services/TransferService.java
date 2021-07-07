@@ -9,9 +9,6 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 public class TransferService {
 
     private String BASE_URL;

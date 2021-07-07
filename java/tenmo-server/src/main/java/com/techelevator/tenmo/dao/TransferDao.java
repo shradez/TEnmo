@@ -1,14 +1,11 @@
 package com.techelevator.tenmo.dao;
 
-import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.TransferDTO;
-
-import java.math.BigDecimal;
 import java.util.List;
 
-public interface TransferDao {
+// Ask Katie to go over the necessity of having these interfaces, does it just provide an extra layer of separation between the models and methods?
 
-    TransferDTO findTransfersByUserId(int userId);
+public interface TransferDao {
 
     public boolean create(TransferDTO transfer);
 

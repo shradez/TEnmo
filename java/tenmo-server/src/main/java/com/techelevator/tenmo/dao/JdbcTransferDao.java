@@ -1,7 +1,5 @@
 package com.techelevator.tenmo.dao;
 
-
-import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.TransferDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -17,13 +15,6 @@ public class JdbcTransferDao implements TransferDao {
 
     public JdbcTransferDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @Override
-    public TransferDTO findTransfersByUserId(int userId) {
-        return null;
-
-
     }
 
     @Override

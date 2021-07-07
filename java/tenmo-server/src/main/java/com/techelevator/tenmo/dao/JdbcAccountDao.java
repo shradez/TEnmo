@@ -32,7 +32,7 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public boolean updateBalance(int userId, BigDecimal amountToAdd) {
+    public boolean updateBalanceByUserID(int userId, BigDecimal amountToAdd) {
         int rows = 0;
         String sql = "UPDATE accounts SET balance = balance + ? WHERE user_id = ?";
         try {
@@ -83,7 +83,6 @@ public class JdbcAccountDao implements AccountDao {
         }
         return balance;
     }
-
 
 
     private Account mapRowToAccount(SqlRowSet rowSet) {

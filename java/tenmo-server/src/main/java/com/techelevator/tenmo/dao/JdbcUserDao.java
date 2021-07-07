@@ -32,7 +32,7 @@ public class JdbcUserDao implements UserDao {
             return id;
         } else {
             return -1;
-    }
+        }
     }
 
     @Override
@@ -40,34 +40,26 @@ public class JdbcUserDao implements UserDao {
         List<User> users = new ArrayList<>();
         String sql = "SELECT user_id, username, password_hash FROM users;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-        while(results.next()) {
+        while (results.next()) {
             User user = mapRowToUser(results);
             users.add(user);
         }
         return users;
     }
 
-
-    //List for Transfer
-    public Map<Integer, String> listUserIdsAndNames(){
-        Map<Integer, String> userIdsAndNames = new HashMap<Integer, String>();
-       String sql = "SELECT user_id, username FROM users;";
-       return null;
-    }
-
     @Override
     public User findByUsername(String username) throws UsernameNotFoundException {
         String sql = "SELECT user_id, username, password_hash FROM users WHERE username ILIKE ?;";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, username);
-        if (rowSet.next()){
+        if (rowSet.next()) {
             return mapRowToUser(rowSet);
-            }
+        }
         throw new UsernameNotFoundException("User " + username + " was not found.");
     }
 
+    //TE Provided This One
     @Override
     public boolean create(String username, String password) {
-
         // create user
         String sql = "INSERT INTO users (username, password_hash) VALUES (?, ?) RETURNING user_id";
         String password_hash = new BCryptPasswordEncoder().encode(password);
@@ -76,7 +68,7 @@ public class JdbcUserDao implements UserDao {
             newUserId = jdbcTemplate.queryForObject(sql, Integer.class, username, password_hash);
         } catch (DataAccessException e) {
             return false;
-                }
+        }
 
         // create account
         sql = "INSERT INTO accounts (user_id, balance) values(?, ?)";
@@ -109,16 +101,6 @@ public class JdbcUserDao implements UserDao {
     }
 
     private User mapRowToUser(SqlRowSet rs) {
-        User user = new User();
-        user.setId(rs.getLong("user_id"));
-        user.setUsername(rs.getString("username"));
-        user.setPassword(rs.getString("password_hash"));
-        user.setActivated(true);
-        user.setAuthorities("USER");
-        return user;
-    }
-
-    private User mapRowToUserForTransfer(SqlRowSet rs) {
         User user = new User();
         user.setId(rs.getLong("user_id"));
         user.setUsername(rs.getString("username"));

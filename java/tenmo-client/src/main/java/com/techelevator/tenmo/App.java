@@ -7,7 +7,6 @@ import com.techelevator.view.ConsoleService;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class App {
@@ -235,11 +234,15 @@ public class App {
                     // Prompt for amount, then save that to a variable
                     String amountToTransfer = console.getUserInput("Enter amount: ");
                     amountToTransferBD = new BigDecimal(amountToTransfer);
-                    System.out.println(NumberFormat.getCurrencyInstance().format(amountToTransferBD));
-                    int userFromAcctId = accountService.getAccountIdByUserId(userFrom.getId(), token);
-                    int userToAcctId = accountService.getAccountIdByUserId(userTo.getId(), token);
-                    transferService.createSend(token, userFromAcctId, userToAcctId, amountToTransferBD);
-                    System.out.println("Transfer created!");
+                    if (amountToTransferBD.compareTo(BigDecimal.ZERO) <= 0) {
+                        System.out.println("Sorry, you need to enter a positive amount to send.");
+                    } else {
+                        System.out.println(NumberFormat.getCurrencyInstance().format(amountToTransferBD));
+                        int userFromAcctId = accountService.getAccountIdByUserId(userFrom.getId(), token);
+                        int userToAcctId = accountService.getAccountIdByUserId(userTo.getId(), token);
+                        transferService.createSend(token, userFromAcctId, userToAcctId, amountToTransferBD);
+                        System.out.println("Transfer created!");
+                    }
                 } else {
                     count++;
                 }
@@ -283,11 +286,15 @@ public class App {
                     // Prompt for amount, then save that to a variable
                     String amountToTransfer = console.getUserInput("Enter amount: ");
                     amountToRequestBD = new BigDecimal(amountToTransfer);
-                    System.out.println(NumberFormat.getCurrencyInstance().format(amountToRequestBD));
-                    int userFromAcctId = accountService.getAccountIdByUserId(userFrom.getId(), token);
-                    int userToAcctId = accountService.getAccountIdByUserId(userTo.getId(), token);
-                    transferService.createRequest(token, userFromAcctId, userToAcctId, amountToRequestBD);
-                    System.out.println("Transfer created!");
+                    if (amountToRequestBD.compareTo(BigDecimal.ZERO) <= 0) {
+                        System.out.println("Sorry, you need to enter a positive amount to request.");
+                    } else {
+                        System.out.println(NumberFormat.getCurrencyInstance().format(amountToRequestBD));
+                        int userFromAcctId = accountService.getAccountIdByUserId(userFrom.getId(), token);
+                        int userToAcctId = accountService.getAccountIdByUserId(userTo.getId(), token);
+                        transferService.createRequest(token, userFromAcctId, userToAcctId, amountToRequestBD);
+                        System.out.println("Transfer created!");
+                    }
                 } else {
                     count++;
                 }

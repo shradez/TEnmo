@@ -5,14 +5,12 @@ import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.TransferDTO;
-import com.techelevator.tenmo.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -42,7 +40,7 @@ public class TransferController {
             transfer.setTypeId(2); // This sets to send
             transferDao.create(transfer);
             //subtract from Principal User balance
-            accountDao.updateBalance(userIdFrom, BigDecimal.valueOf(-1).multiply(amountSubtractedFromPrincipalUser));
+            accountDao.updateBalanceByUserID(userIdFrom, BigDecimal.valueOf(-1).multiply(amountSubtractedFromPrincipalUser));
             // add to balance principal is sending to
             int acctIdTo = transfer.getAccountIdTo();
             BigDecimal amountAddedToChosenUser = transfer.getAmount();
