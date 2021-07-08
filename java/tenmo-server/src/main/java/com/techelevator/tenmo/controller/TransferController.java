@@ -79,12 +79,12 @@ public class TransferController {
         return transferDao.getPendingTransfersByAccountId(acctId);
     }
 
-    @RequestMapping(path = "/{transferId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/{transferId}", method = RequestMethod.GET) // this one's not great in terms of security
     public TransferDTO getTransferByTransferId(@PathVariable int transferId) {
         return transferDao.getTransferByTransferId(transferId);
     }
 
-    @RequestMapping(path = "/approve", method = RequestMethod.PUT)
+    @RequestMapping(path = "/approve", method = RequestMethod.PUT) // check if user has enough money
     public TransferDTO approve(@RequestBody TransferDTO transfer) throws Exception {
         if (transfer.getStatusId() == 1) {
             accountDao.updateBalanceByAccountId(transfer.getAccountIdTo(), transfer.getAmount().multiply(BigDecimal.valueOf(-1)));

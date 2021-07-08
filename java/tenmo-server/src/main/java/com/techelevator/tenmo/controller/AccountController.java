@@ -34,7 +34,7 @@ public class AccountController {
         return accountDao.findBalanceByAccountID(userId);
     }
 
-    @RequestMapping(path = "/{userId}", method = RequestMethod.GET)
+    @RequestMapping(path = "/{userId}", method = RequestMethod.GET) // Path variable is unnecessary since it only ever returns your only account
     public Account getAccountByUserId(@PathVariable int userId, Principal principal) throws AccountNotFoundException {
         String name = principal.getName();
         userId = userDao.findIdByUsername(name);

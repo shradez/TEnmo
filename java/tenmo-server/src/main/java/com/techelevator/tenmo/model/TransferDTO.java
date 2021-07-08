@@ -3,6 +3,7 @@ package com.techelevator.tenmo.model;
 import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 
+// Refactor this name to transfer
 public class TransferDTO {
     private int transferId;
     @NotEmpty

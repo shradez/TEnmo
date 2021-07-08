@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @RequestMapping(path = "", method = RequestMethod.GET)
-    public List<User> getAll() {
+    public List<User> getAll() { // this returns password hashes for user, maybe update this later to fix this in some way.
         return userDao.findAll();
     }
 
