@@ -27,17 +27,17 @@ public class AccountService {
     public Account[] getAll(String token) throws AccountServiceException {
         Account[] accounts = null;
         try {
-            accounts = restTemplate.exchange(BASE_URL + "accounts", HttpMethod.GET, makeAuthEntity(token), Account[].class).getBody();
+            accounts = restTemplate.exchange(BASE_URL + "account", HttpMethod.GET, makeAuthEntity(token), Account[].class).getBody();
         } catch (RestClientResponseException ex) {
             throw new AccountServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
         }
         return accounts;
     }
 
-    public Account getAccount(int userId, String token) {
+    public Account getAccount(String token) {
         Account a = null;
         try {
-           a = restTemplate.exchange(BASE_URL + "accounts/" + userId, HttpMethod.GET, makeAuthEntity(token), Account.class).getBody();
+           a = restTemplate.exchange(BASE_URL + "account/", HttpMethod.GET, makeAuthEntity(token), Account.class).getBody();
        } catch (RestClientResponseException ex) {
             System.err.println(ex.getRawStatusCode() + " : " + ex.getStatusText());
         } catch (ResourceAccessException | NullPointerException ex) {

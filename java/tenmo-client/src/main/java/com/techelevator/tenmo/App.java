@@ -78,7 +78,7 @@ public class App {
 
     private void viewCurrentBalance() {
         String token = currentUser.getToken();
-        Account a = accountService.getAccount(currentUser.getUser().getId(), token);
+        Account a = accountService.getAccount(token);
         BigDecimal balance = a.getBalance();
         System.out.format("Your current balance is: " + NumberFormat.getCurrencyInstance().format(balance) + "\n");
 

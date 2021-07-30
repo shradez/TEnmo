@@ -15,7 +15,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/account")
 @PreAuthorize("isAuthenticated()")
 public class AccountController {
 
@@ -34,10 +34,10 @@ public class AccountController {
         return accountDao.findBalanceByAccountID(userId);
     }
 
-    @RequestMapping(path = "/{userId}", method = RequestMethod.GET) // Path variable is unnecessary since it only ever returns your only account
-    public Account getAccountByUserId(@PathVariable int userId, Principal principal) throws AccountNotFoundException {
+    @RequestMapping(path = "", method = RequestMethod.GET) //
+    public Account getAccount(Principal principal) throws AccountNotFoundException {
         String name = principal.getName();
-        userId = userDao.findIdByUsername(name);
+        int userId = userDao.findIdByUsername(name);
         return accountDao.findAccountByUserId(userId);
     }
 
